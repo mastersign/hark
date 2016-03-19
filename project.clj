@@ -9,5 +9,6 @@
                    :java-source-paths ["src/java" "test/java"]}}
   :plugins [[lein-junit "1.1.8"]]
   :source-paths ["src/clj"]
+  :test-paths ["test/clj"]
   :java-source-paths ["src/java"]
   :junit ["test/java"])
