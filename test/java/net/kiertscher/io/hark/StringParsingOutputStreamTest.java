@@ -44,17 +44,18 @@ public class StringParsingOutputStreamTest extends TestCase {
 
     public void testShortFlush() throws IOException {
         final StringBuffer sb = new StringBuffer();
-        final String separator = System.lineSeparator();
-        final Charset charset = Charset.forName("UTF-8");
         final StringListener listener = new StringListener() {
             public void onString(String line) {
                 sb.append(line);
                 _stringCount++;
             }
         };
-        final int bufferSize = 4; // a buffer size shorter than the input
-        final StringParsingOutputStream s = new StringParsingOutputStream(
-                listener, charset, separator, bufferSize);
+        final StringParsingOptions opts = new StringParsingOptions(
+                Charset.forName("UTF-8"),
+                StringParsingOptions.DEFAULT.getSeparator(),
+                4 // a buffer size shorter than the input
+        );
+        final StringParsingOutputStream s = new StringParsingOutputStream(listener, opts);
         final Writer w = new OutputStreamWriter(s, "UTF-8");
 
         w.write("a");
@@ -70,17 +71,18 @@ public class StringParsingOutputStreamTest extends TestCase {
 
     public void testLongFlush() throws IOException {
         final StringBuffer sb = new StringBuffer();
-        final String separator = System.lineSeparator();
-        final Charset charset = Charset.forName("UTF-8");
         final StringListener listener = new StringListener() {
             public void onString(String line) {
                 sb.append(line);
                 _stringCount++;
             }
         };
-        final int bufferSize = 4; // a buffer size greater than the input
-        final StringParsingOutputStream s = new StringParsingOutputStream(
-                listener, charset, separator, bufferSize);
+        final StringParsingOptions opts = new StringParsingOptions(
+                Charset.forName("UTF-8"),
+                StringParsingOptions.DEFAULT.getSeparator(),
+                4 // a buffer size greater than the input
+        );
+        final StringParsingOutputStream s = new StringParsingOutputStream(listener, opts);
         final Writer w = new OutputStreamWriter(s, "UTF-8");
 
         w.write("a");
@@ -95,17 +97,18 @@ public class StringParsingOutputStreamTest extends TestCase {
 
     public void testMultiByteChar() throws IOException {
         final StringBuffer sb = new StringBuffer();
-        final String separator = System.lineSeparator();
-        final Charset charset = Charset.forName("UTF-8");
         final StringListener listener = new StringListener() {
             public void onString(String line) {
                 sb.append(line);
                 _stringCount++;
             }
         };
-        final int bufferSize = 5; // a buffer size of five to provoke misaligned multi-byte chars
-        final StringParsingOutputStream s = new StringParsingOutputStream(
-                listener, charset, separator, bufferSize);
+        final StringParsingOptions opts = new StringParsingOptions(
+                Charset.forName("UTF-8"),
+                StringParsingOptions.DEFAULT.getSeparator(),
+                5 // a buffer size of five to provoke misaligned multi-byte chars
+        );
+        final StringParsingOutputStream s = new StringParsingOutputStream(listener, opts);
         final Writer w = new OutputStreamWriter(s, "UTF-8");
 
         w.write("\u0398");
@@ -123,7 +126,6 @@ public class StringParsingOutputStreamTest extends TestCase {
     public void testLinesFlush() throws IOException {
         final StringBuffer sb = new StringBuffer();
         final String separator = System.lineSeparator();
-        final Charset charset = Charset.forName("UTF-8");
         final StringListener listener = new StringListener() {
             public void onString(String line) {
                 sb.append(line);
@@ -131,8 +133,12 @@ public class StringParsingOutputStreamTest extends TestCase {
                 _stringCount++;
             }
         };
-        final StringParsingOutputStream s = new StringParsingOutputStream(
-                listener, charset, separator, 10);
+        final StringParsingOptions opts = new StringParsingOptions(
+                Charset.forName("UTF-8"),
+                separator,
+                10
+        );
+        final StringParsingOutputStream s = new StringParsingOutputStream(listener, opts);
         final Writer w = new OutputStreamWriter(s, "UTF-8");
 
         final String str1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -155,7 +161,6 @@ public class StringParsingOutputStreamTest extends TestCase {
         final StringBuffer sbExpected = new StringBuffer();
         final StringBuffer sbActual = new StringBuffer();
         final String separator = System.lineSeparator();
-        final Charset charset = Charset.forName("UTF-8");
         final StringListener listener = new StringListener() {
             public void onString(String line) {
                 sbActual.append(line);
@@ -163,8 +168,12 @@ public class StringParsingOutputStreamTest extends TestCase {
                 _stringCount++;
             }
         };
-        final StringParsingOutputStream s = new StringParsingOutputStream(
-                listener, charset, separator, 80);
+        final StringParsingOptions opts = new StringParsingOptions(
+                Charset.forName("UTF-8"),
+                separator,
+                80
+        );
+        final StringParsingOutputStream s = new StringParsingOutputStream(listener, opts);
         final OutputStreamWriter w = new OutputStreamWriter(s, "UTF-8");
 
         final int lines = 10000;
@@ -200,8 +209,10 @@ public class StringParsingOutputStreamTest extends TestCase {
             }
         };
         final ByteArrayOutputStream bas = new ByteArrayOutputStream();
-        final StringParsingOutputStream s = new StringParsingOutputStream(listener, Charset.forName("US-ASCII"));
-        s.setOut(bas);
+        final StringParsingOptions opts = new StringParsingOptions(
+                Charset.forName("US-ASCII")
+        );
+        final StringParsingOutputStream s = new StringParsingOutputStream(listener, bas, opts);
 
         byte[] buffer = new byte[2048];
         for (int i = 0; i < buffer.length; i++) {

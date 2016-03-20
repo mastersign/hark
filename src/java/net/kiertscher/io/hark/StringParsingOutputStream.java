@@ -20,61 +20,32 @@ import java.nio.charset.CodingErrorAction;
  */
 public class StringParsingOutputStream extends OutputStream {
 
-    /**
-     * The default buffer size which is used if no buffer size is given to the constructor.
-     * Is {@code 32}, if not changed.
-     */
-    public static int DefaultBufferSize = 32;
-
-    /**
-     * The default character set which is used if no character set is given to the constructor.
-     * Is {@code System.defaultCharset()}, if not changed.
-     */
-    public static Charset DefaultCharset = Charset.defaultCharset();
-
-    /**
-     * The default separator which is used if no separator is given to the construtor.
-     * Is {@code System.lineSeparator()}, if not changed.
-     */
-    public static String DefaultSeparator = System.lineSeparator();
-
-    /**
-     * The replacement string for malformed byte sequences.
-     * Is a question mark, if not changed.
-     */
-    public static String DefaultReplacement = "?";
+    private OutputStream _out;
+    private StringParsingOptions _options;
 
     private StringListener _listener;
     private ByteBuffer _byteBuffer;
-    private Charset _charset;
     private CharsetDecoder _decoder;
     private CharBuffer _charBuffer;
     private StringBuffer _stringBuffer;
-    private String _separator;
-
-    private OutputStream _out;
 
     /**
      * Initializes a new instance of the {@link StringParsingOutputStream}.
      *
      * @param listener The listener which is called for every separated string.
-     * @param charset    The character set used to decode the stream.
-     * @param separator  The separator used to detect line breaks.
-     * @param bufferSize The size of the decoding buffer.
+     * @param out      The output stream to pass all operations to.
+     * @param options  The options controlling the decoding and parsing.
      */
-    public StringParsingOutputStream(StringListener listener, Charset charset, String separator, int bufferSize) {
+    public StringParsingOutputStream(StringListener listener, OutputStream out, StringParsingOptions options) {
         if (listener == null) throw new IllegalArgumentException("The argument listener must not be null.");
-        if (charset == null) throw new IllegalArgumentException("The argument charset must not be null.");
-        if (separator == null) throw new IllegalArgumentException("The argument separator must not be null.");
-        if (bufferSize < 4) throw new IllegalArgumentException("The buffer size must be at least 4.");
+        _out = out;
+        _options = options != null ? options : StringParsingOptions.DEFAULT;
         _listener = listener;
-        _separator = separator;
-        _charset = charset;
-        _decoder = _charset.newDecoder()
+        _decoder = _options.getCharset().newDecoder()
                 .onMalformedInput(CodingErrorAction.REPLACE)
                 .onUnmappableCharacter(CodingErrorAction.REPLACE)
-                .replaceWith(DefaultReplacement);
-        _byteBuffer = ByteBuffer.allocate(bufferSize);
+                .replaceWith(_options.getDecodeReplacement());
+        _byteBuffer = ByteBuffer.allocate(_options.getBufferSize());
         _charBuffer = CharBuffer.allocate((int) Math.ceil(_byteBuffer.capacity() * _decoder.maxCharsPerByte()));
         _stringBuffer = new StringBuffer();
     }
@@ -83,21 +54,20 @@ public class StringParsingOutputStream extends OutputStream {
      * Initializes a new instance of the {@link StringParsingOutputStream}.
      *
      * @param listener The listener which is called for every separated string.
-     * @param charset   The character set used to decode the stream.
-     * @param separator The separator used to detect line breaks.
+     * @param options  The options controlling the decoding and parsing.
      */
-    public StringParsingOutputStream(StringListener listener, Charset charset, String separator) {
-        this(listener, charset, separator, DefaultBufferSize);
+    public StringParsingOutputStream(StringListener listener, StringParsingOptions options) {
+        this(listener, null, options);
     }
 
     /**
      * Initializes a new instance of the {@link StringParsingOutputStream}.
      *
      * @param listener The listener which is called for every separated string.
-     * @param charset The character set used to decode the stream.
+     * @param out      The output stream to pass all operations to.
      */
-    public StringParsingOutputStream(StringListener listener, Charset charset) {
-        this(listener, charset, DefaultSeparator);
+    public StringParsingOutputStream(StringListener listener, OutputStream out) {
+        this(listener, out, null);
     }
 
     /**
@@ -106,7 +76,7 @@ public class StringParsingOutputStream extends OutputStream {
      * @param listener The listener which is called for every separated string.
      */
     public StringParsingOutputStream(StringListener listener) {
-        this(listener, DefaultCharset);
+        this(listener, null, null);
     }
 
     /**
@@ -117,31 +87,15 @@ public class StringParsingOutputStream extends OutputStream {
     }
 
     /**
-     * @return The character set which is used for decoding the stream.
-     */
-    public Charset getCharset() {
-        return _charset;
-    }
-
-    /**
-     * @return The string which is used to separate strings.
-     */
-    public String getSeparator() {
-        return _separator;
-    }
-
-    /**
      * @return The output stream to pass all operations to or {@code null}.
      */
     public OutputStream getOut() { return _out; }
 
     /**
-     * Sets the output stream.
-     *
-     * @param out A stream to pass all operations to or {@code null}.
+     * @return The options controlling the decoding and parsing.
      */
-    public void setOut(OutputStream out) {
-        _out = out;
+    public StringParsingOptions getOptions() {
+        return _options;
     }
 
     /**
@@ -215,13 +169,14 @@ public class StringParsingOutputStream extends OutputStream {
      * @return The next line from the string buffer, if a line separator was found; otherwise null.
      */
     private String processStringBuffer() {
-        int pos = _stringBuffer.indexOf(_separator, 0);
+        String separator = _options.getSeparator();
+        int pos = _stringBuffer.indexOf(separator, 0);
         if (pos < 0) {
             _lastPos = _stringBuffer.length();
             return null;
         } else {
             String line = _stringBuffer.substring(0, pos);
-            _stringBuffer.delete(0, pos + _separator.length());
+            _stringBuffer.delete(0, pos + separator.length());
             _lastPos = 0;
             return line;
         }
