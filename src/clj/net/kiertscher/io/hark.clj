@@ -1,7 +1,8 @@
 (ns net.kiertscher.io.hark
   (:import [java.nio.charset Charset]
            [net.kiertscher.io.hark StringParsingOutputStream
-                                   StringListener]))
+                                   StringListener
+                                   StringParsingOptions]))
 
 (defn- parse-charset
   [charset]
@@ -10,25 +11,22 @@
     charset))
 
 (defn- parse-opts
-  [opts]
-  {:charset (parse-charset (get opts :charset StringParsingOutputStream/DefaultCharset))
-   :separator (get opts :separator StringParsingOutputStream/DefaultSeparator)
-   :buffer-size (get opts :buffer-size StringParsingOutputStream/DefaultBufferSize)})
+  [args]
+  (let [opts (apply hash-map args)]
+    (StringParsingOptions.
+      (parse-charset (get opts :charset (.getCharset StringParsingOptions/DEFAULT)))
+      (get opts :separator (.getSeparator StringParsingOptions/DEFAULT))
+      (get opts :buffer-size (.getBufferSize StringParsingOptions/DEFAULT))
+      (get opts :decode-replacement (.getDecodeReplacement StringParsingOptions/DEFAULT)))))
 
-(defn tap
-  ([f out opts]
+(defn tap-in
+  [f out & args]
    (let [listener (reify
                     StringListener
                     (onString [_ v] (f v)))
-         opts' (parse-opts opts)
-         s (StringParsingOutputStream.
-              listener
-              (:charset opts')
-              (:separator opts')
-              (:buffer-size opts'))]
-     (.setOut s out)
-     s))
-  ([f out]
-   (tap f out {}))
-  ([f]
-   (tap f nil {})))
+         opts (parse-opts args)]
+     (StringParsingOutputStream. listener out opts)))
+
+(defn tap
+  [f & args]
+  (apply tap-in f nil args))

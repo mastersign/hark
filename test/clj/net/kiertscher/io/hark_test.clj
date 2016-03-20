@@ -7,10 +7,10 @@
   (let [collected (atom [])
           handler-f (fn [l]
                       (swap! collected #(conj % l)))]
-      (with-open [s (h/tap handler-f nil {:separator "X" :charset "UTF-8"})
+      (with-open [s (h/tap handler-f :separator "X" :charset "UTF-8")
                   w (io/writer s :encoding "UTF-8")]
         (binding [*out* w]
-          (doseq [i (range n)]
+          (doseq [_ (range n)]
             (print "ABCDEFG X"))))
       (count @collected)))
 
