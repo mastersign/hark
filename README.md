@@ -1,6 +1,6 @@
 # hark
 
-> A Clojure library for parsing an `OutputStream` for separated strings.
+> A Java / Clojure library, providing a `java.io.OutputStream` for parsing separated strings.
 
 Inspired by ideas of Daniel Kiertscher.
 
