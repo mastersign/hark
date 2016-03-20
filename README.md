@@ -2,6 +2,8 @@
 
 > A Clojure library for parsing an `OutputStream` for separated strings.
 
+Inspired by ideas of Daniel Kiertscher.
+
 ## Usage
 
 FIXME: explanation
