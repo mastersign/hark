@@ -1,4 +1,4 @@
-(defproject hark "0.1.0-SNAPSHOT"
+(defproject hark "0.1.0"
   :description "A Java / Clojure library, providing an OutputStream for parsing separated strings."
   :url "http://github.com/mastersign/hark"
   :license {:name "Eclipse Public License"

@@ -12,7 +12,7 @@ This library can be used as a Clojure library as well as a Java library.
 
 ### Clojure
 
-Add `[hark "0.1.0-SNAPSHOT"]` to the dependencies in your `project.clj`.
+Add `[hark "0.1.0"]` to the dependencies in your `project.clj`.
 
 ```clojure
 (require '(clojure.java.io :as io))
