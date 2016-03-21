@@ -66,6 +66,6 @@
    The function f is called for every separated string.
 
    Additional arguments are treated as an option map.
-   For a detailed description of the option see the doc string of tap-in."
+   For a detailed description of the options see the doc string of tap-in."
   [f & args]
   (apply tap-in f nil args))
