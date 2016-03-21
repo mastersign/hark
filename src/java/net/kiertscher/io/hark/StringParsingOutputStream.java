@@ -100,8 +100,6 @@ public class StringParsingOutputStream extends OutputStream {
 
     /**
      * {@inheritDoc}
-     *
-     * @see java.io.OutputStream#write(int)
      */
     @Override
     public void write(int b) throws IOException {
@@ -115,8 +113,6 @@ public class StringParsingOutputStream extends OutputStream {
 
     /**
      * {@inheritDoc}
-     *
-     * @see java.io.OutputStream#write(byte[])
      */
     @Override
     public void write(byte[] b) throws IOException {
@@ -126,8 +122,6 @@ public class StringParsingOutputStream extends OutputStream {
 
     /**
      * {@inheritDoc}
-     *
-     * @see java.io.OutputStream#write(byte[], int, int)
      */
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
@@ -224,8 +218,6 @@ public class StringParsingOutputStream extends OutputStream {
 
     /**
      * {@inheritDoc}
-     *
-     * @see java.io.OutputStream#flush()
      */
     @Override
     public void flush() throws IOException {
@@ -235,8 +227,6 @@ public class StringParsingOutputStream extends OutputStream {
 
     /**
      * {@inheritDoc}
-     *
-     * @see java.io.OutputStream#close()
      */
     @Override
     public void close() throws IOException {

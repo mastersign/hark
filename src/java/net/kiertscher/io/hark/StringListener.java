@@ -1,7 +1,7 @@
 package net.kiertscher.io.hark;
 
 /**
- * The interface for a listener to @{@link StringParsingOutputStream}.
+ * The interface for a listener to {@link StringParsingOutputStream}.
  *
  * @author Tobias Kiertscher
  */
