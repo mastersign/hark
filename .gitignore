@@ -3,6 +3,7 @@
 /checkouts
 /doc/clj
 /doc/java
+/release
 pom.xml
 pom.xml.asc
 *.jar
