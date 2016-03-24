@@ -1,6 +1,7 @@
 # hark
 
-[![build status][travis-img]][travis-url]
+[![Build Status][travis-img]][travis-url]
+[![Clojars Project][clojars-img]][clojars-url]
 
 > A Java / Clojure library, providing a `java.io.OutputStream` for parsing separated strings.
 
@@ -68,4 +69,6 @@ Distributed under the Eclipse Public License either version 1.0 or
 
 [travis-img]: https://img.shields.io/travis/mastersign/hark/master.svg
 [travis-url]: https://travis-ci.org/mastersign/hark
+[clojars-img]: https://img.shields.io/clojars/v/hark.svg
+[clojars-url]: https://clojars.org/hark
 [latest release]: https://github.com/mastersign/hark/releases/latest
